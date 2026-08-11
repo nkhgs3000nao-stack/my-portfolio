@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>たじまっち｜但馬の人・場所・体験に出会う地域クエスト型メディア</title>
+<meta name="description" content="たじまっちは、但馬の面白い人・場所・体験に出会いながら、地域に関わる人を増やしていく地域発信プロジェクトです。">
+<link rel="icon" type="image/png" href="./images/tajimatch-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#1B1035;
+    --night-mid:#3A2B5C;
+    --cyan:#6FD3F7;
+    --path:#E8C77E;
+    --parchment:#FFF8E7;
+    --hp:#E4432A;
+    --hp-dark:#B8341E;
+    --gold:#F2C230;
+    --gold-dark:#C99A18;
+    --grass:#3FA34D;
+    --forest:#1F5C2E;
+    --ink:#1B1035;
+    --ink-soft:#4A3F63;
+    --paper-line: rgba(27,16,53,0.18);
+    --radius: 0px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--parchment);
+    color:var(--ink);
+    font-family:'Zen Kaku Gothic New', sans-serif;
+    font-weight:400;
+    line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.pixel,.logo,.nav-links a,.btn,.eyebrow,.member-tag,.channel-tag{
+    font-family:'DotGothic16', monospace;
+  }
+  h1,h2,h3{letter-spacing:.02em;}
+  a{color:inherit;}
+  img,svg{display:block;max-width:100%;}
+  ::selection{background:var(--gold);color:var(--ink);}
+
+  .eyebrow{
+    font-size:.72rem;
+    letter-spacing:.12em;
+    font-weight:400;
+    color:var(--hp);
+    text-transform:uppercase;
+  }
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 clamp(20px,5vw,48px);
+  }
+
+  /* ---------- Pixel UI primitives ---------- */
+  .pixel-panel{
+    background:var(--parchment);
+    border:4px solid var(--ink);
+    box-shadow:7px 7px 0 rgba(27,16,53,.35);
+    border-radius:0;
+  }
+  .pixel-panel-dark{
+    background:rgba(27,16,53,.88);
+    border:4px solid var(--parchment);
+    box-shadow:7px 7px 0 rgba(0,0,0,.4);
+    color:var(--parchment);
+  }
+  .btn{
+    display:inline-block;
+    padding:13px 26px;
+    text-decoration:none;
+    font-size:.85rem;
+    font-weight:400;
+    letter-spacing:.03em;
+    border:3px solid var(--ink);
+    background:var(--parchment);
+    color:var(--ink);
+    box-shadow:4px 4px 0 var(--ink);
+    transition:transform .1s ease, box-shadow .1s ease;
+  }
+  .btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);}
+  .btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink);}
+  .btn-fill{
+    background:var(--hp);
+    border-color:var(--ink);
+    color:var(--parchment);
+  }
+  .btn-outline{
+    background:var(--parchment);
+    color:var(--ink);
+  }
+
+  .tile-divider{
+    height:16px;
+    border-top:4px solid var(--ink);
+    border-bottom:4px solid var(--ink);
+    background:repeating-linear-gradient(90deg, var(--grass) 0 16px, var(--forest) 16px 32px);
+  }
+
+  /* ---------- NAV ---------- */
+  header.nav{
+    position:sticky;
+    top:0;left:0;right:0;
+    z-index:50;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px clamp(20px,5vw,48px);
+    background:var(--night);
+    border-bottom:4px solid var(--gold);
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:1.05rem;
+    font-weight:400;
+    color:var(--parchment);
+    text-decoration:none;
+  }
+  .logo-icon{
+    width:36px;height:36px;
+    border-radius:50%;
+    display:block;
+    border:2px solid var(--gold);
+  }
+  .nav-links{
+    display:flex;
+    gap:clamp(10px,2.4vw,22px);
+    align-items:center;
+    font-size:.68rem;
+  }
+  .nav-links a{
+    text-decoration:none;
+    color:var(--parchment);
+    opacity:.9;
+    padding:6px 4px;
+  }
+  .nav-links a:hover{color:var(--gold);opacity:1;}
+  .nav-cta{
+    border:2px solid var(--gold) !important;
+    padding:8px 14px !important;
+    background:var(--hp);
+    color:var(--parchment) !important;
+    box-shadow:3px 3px 0 var(--ink);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    height:100svh;
+    min-height:640px;
+    overflow:hidden;
+    background:var(--night);
+  }
+  .hero-bg{
+    position:absolute;
+    inset:0;
+    background-image:url('./images/tajimatch-hero-pixel.png');
+    background-size:cover;
+    background-position:center 30%;
+    image-rendering:pixelated;
+    image-rendering:-moz-crisp-edges;
+    image-rendering:crisp-edges;
+  }
+  .hero-scanline{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(27,16,53,.15) 0%, rgba(27,16,53,0) 30%, rgba(27,16,53,.75) 100%);
+  }
+  .hero-textbox{
+    position:absolute;
+    left:50%;
+    bottom:9%;
+    transform:translateX(-50%);
+    width:min(680px,88%);
+    padding:26px 30px 30px;
+    text-align:center;
+  }
+  .hero-eyebrow{
+    font-size:.62rem;
+    letter-spacing:.14em;
+    color:var(--gold);
+    margin-bottom:16px;
+  }
+  .hero-textbox h1{
+    font-size:clamp(2.1rem,7vw,3.6rem);
+    line-height:1.3;
+    margin:0 0 16px;
+    font-weight:400;
+    color:var(--parchment);
+    text-shadow:3px 3px 0 var(--night-mid);
+  }
+  .hero-textbox p.tagline{
+    font-size:clamp(.82rem,1.6vw,.98rem);
+    margin:0;
+    font-weight:400;
+    color:var(--parchment);
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    line-height:1.9;
+  }
+  .hero-textbox p.tagline strong{
+    color:var(--gold);
+    font-weight:700;
+  }
+  .cursor{
+    position:absolute;
+    right:16px;bottom:10px;
+    color:var(--gold);
+    font-size:.9rem;
+    animation:blink 1s steps(1) infinite;
+  }
+  @keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+  .scroll-cue{
+    position:absolute;
+    bottom:3%;left:50%;
+    transform:translateX(-50%);
+    z-index:5;
+    color:var(--parchment);
+    opacity:.8;
+    font-size:.62rem;
+    letter-spacing:.1em;
+    display:none;
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section{
+    padding:clamp(64px,10vw,120px) 0;
+  }
+  .reveal{
+    opacity:0;
+    transform:translateY(20px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .reveal.is-visible{opacity:1;transform:translateY(0);}
+
+  .lead{background:var(--parchment);}
+  .lead-grid{
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    gap:clamp(32px,6vw,64px);
+    align-items:center;
+    text-align:left;
+  }
+  @media (max-width:860px){
+    .lead-grid{grid-template-columns:1fr;}
+    .lead-map{order:-1;max-width:320px;margin:0 auto;}
+  }
+  .lead h2{
+    font-size:clamp(1.3rem,3.2vw,1.9rem);
+    margin:14px 0 26px;
+    font-weight:400;
+    line-height:1.6;
+  }
+  .lead .body{
+    max-width:42em;
+    margin:0;
+    font-size:1rem;
+    color:var(--ink-soft);
+  }
+  .lead .body + .body{margin-top:1.2em;}
+  .lead-map{padding:14px;}
+  .lead-map img{width:100%;height:auto;display:block;border:2px solid var(--ink);}
+  .lead-map-caption{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:14px;
+    font-size:.68rem;
+    color:var(--ink-soft);
+    font-family:'DotGothic16',monospace;
+  }
+  .lead-map-caption .chip{
+    width:11px;height:11px;
+    background:var(--hp);
+    border:2px solid var(--ink);
+    flex:none;
+  }
+
+  /* voices */
+  .voices{
+    background:var(--night);
+    color:var(--parchment);
+  }
+  .voices .wrap{text-align:center;}
+  .voices .eyebrow{color:var(--cyan);}
+  .voice-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+    margin:36px 0 40px;
+    text-align:left;
+  }
+  @media (max-width:720px){.voice-grid{grid-template-columns:1fr;}}
+  .voice-card{
+    position:relative;
+    padding:30px 26px 26px;
+  }
+  .voice-card::before{
+    content:"\2022\2022\2022";
+    font-family:'DotGothic16',monospace;
+    font-size:1rem;
+    color:var(--gold);
+    letter-spacing:.3em;
+    display:block;
+    margin-bottom:12px;
+  }
+  .voice-card p{
+    font-family:'DotGothic16',monospace;
+    font-size:1.05rem;
+    font-weight:400;
+    margin:0;
+    color:var(--parchment);
+    line-height:1.9;
+  }
+  .voices .closing{
+    max-width:38em;
+    margin:0 auto;
+    color:#CFC6E8;
+  }
+
+  /* quest categories */
+  .quests{background:var(--parchment);}
+  .quests h2{
+    text-align:center;
+    font-size:clamp(1.3rem,3vw,1.8rem);
+    margin:14px 0 44px;
+    font-weight:400;
+  }
+  .quest-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+  }
+  @media (max-width:820px){.quest-grid{grid-template-columns:1fr;}}
+  .quest-card{
+    padding:30px 26px;
+    text-align:center;
+  }
+  .quest-icon-frame{
+    width:56px;height:56px;
+    margin:0 auto 18px;
+    background:var(--parchment);
+    border:3px solid var(--ink);
+    box-shadow:4px 4px 0 var(--ink);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .quest-icon{width:32px;height:32px;}
+  .quest-card h3{
+    font-size:1rem;
+    margin:0 0 12px;
+    font-weight:400;
+  }
+  .quest-card p{
+    color:var(--ink-soft);
+    font-size:.9rem;
+    margin:0;
+    text-align:left;
+  }
+
+  /* members */
+  .members{background:var(--parchment);}
+  .members h2{
+    text-align:center;
+    font-size:clamp(1.3rem,3vw,1.8rem);
+    margin:14px 0 44px;
+    font-weight:400;
+  }
+  .member-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:22px;
+  }
+  @media (max-width:640px){.member-grid{grid-template-columns:1fr;}}
+  .member-card{
+    padding:26px 24px;
+    display:flex;
+    gap:18px;
+    align-items:flex-start;
+  }
+  .member-tag{
+    font-size:.62rem;
+    letter-spacing:.08em;
+    color:var(--hp);
+    font-weight:400;
+  }
+  .member-avatar{
+    flex:none;
+    width:58px;height:58px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--grass);
+    color:var(--parchment);
+    border:3px solid var(--ink);
+    box-shadow:3px 3px 0 var(--ink);
+    font-family:'DotGothic16',monospace;
+    font-size:1.4rem;
+    font-weight:400;
+  }
+  .member-card:nth-child(2n) .member-avatar{background:var(--night-mid);}
+  .member-body h3{
+    font-size:1rem;
+    margin:2px 0 4px;
+    font-weight:400;
+  }
+  .member-role{
+    font-size:.76rem;
+    color:var(--ink-soft);
+    opacity:.85;
+    margin:0 0 10px;
+    font-family:'DotGothic16',monospace;
+  }
+  .member-comment{
+    font-size:.88rem;
+    color:var(--ink-soft);
+    margin:0;
+  }
+
+  /* channels */
+  .channels{background:var(--path);}
+  .channels h2{
+    text-align:center;
+    font-size:clamp(1.3rem,3vw,1.8rem);
+    margin:14px 0 44px;
+    font-weight:400;
+  }
+  .channel-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+  }
+  @media (max-width:760px){.channel-grid{grid-template-columns:1fr;}}
+  .channel-card{
+    padding:34px 30px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .channel-tag{
+    font-weight:400;
+    font-size:1.15rem;
+  }
+  .channel-card p{
+    color:var(--ink-soft);
+    font-size:.92rem;
+    margin:0;
+    flex-grow:1;
+    font-family:'Zen Kaku Gothic New',sans-serif;
+  }
+  .channel-link{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:.78rem;
+    font-weight:400;
+    text-decoration:none;
+    color:var(--hp);
+    width:fit-content;
+  }
+  .channel-link:hover{text-decoration:underline;}
+
+  /* CTA */
+  .cta{
+    background:var(--forest);
+    color:var(--parchment);
+    text-align:center;
+  }
+  .cta h2{
+    font-size:clamp(1.4rem,3.6vw,2rem);
+    margin:0 0 18px;
+    font-weight:400;
+    line-height:1.6;
+  }
+  .cta p{
+    color:#D9E8D2;
+    max-width:32em;
+    margin:0 auto 34px;
+    font-family:'Zen Kaku Gothic New',sans-serif;
+  }
+  .cta-buttons{
+    display:flex;
+    gap:18px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .cta .btn-fill{background:var(--gold);color:var(--ink);border-color:var(--ink);}
+  .cta .btn-fill:hover{background:var(--gold-dark);}
+  .cta .btn-outline{background:transparent;color:var(--parchment);border-color:var(--parchment);box-shadow:4px 4px 0 rgba(0,0,0,.3);}
+
+  footer{
+    background:var(--night);
+    color:#B8AED6;
+    text-align:center;
+    padding:36px 20px 30px;
+    font-size:.7rem;
+    border-top:4px solid var(--gold);
+  }
+  footer .logo{
+    display:inline-flex;
+    margin-bottom:10px;
+    font-size:.95rem;
+    color:var(--parchment);
+  }
+  footer .logo-icon{width:32px;height:32px;}
+  footer div + div{font-family:'Zen Kaku Gothic New',sans-serif;font-size:.78rem;}
+
+  @media (prefers-reduced-motion: reduce){
+    .cursor{animation:none;}
+    .reveal{transition:none;opacity:1;transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav" id="siteNav">
+  <a href="#" class="logo"><img src="./images/tajimatch-logo.png" alt="たじまっち" class="logo-icon">たじまっち</a>
+  <nav class="nav-links">
+    <a href="#about">について</a>
+    <a href="#members">メンバー</a>
+    <a href="#channels">SNS / note</a>
+    <a href="#join" class="nav-cta btn">参加する</a>
+  </nav>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-scanline"></div>
+
+  <div class="hero-textbox pixel-panel-dark">
+    <div class="hero-eyebrow">TAJIMA QUEST MEDIA / COMMUNITY</div>
+    <h1>たじまっち</h1>
+    <p class="tagline">但馬の<strong>人・場所・体験</strong>に出会いながら、<br class="brk">地域に関わる人を増やしていく地域発信プロジェクト</p>
+    <span class="cursor">▼</span>
+  </div>
+
+  <div class="scroll-cue">SCROLL ▼</div>
+</section>
+
+<div class="tile-divider"></div>
+
+<!-- ================= LEAD / ABOUT ================= -->
+<section id="about" class="lead">
+  <div class="wrap reveal lead-grid">
+    <div class="lead-text">
+      <div class="eyebrow">About Tajima</div>
+      <h2>兵庫県北部、日本海に面した<br class="brk">自然豊かな土地。</h2>
+      <p class="body">但馬は兵庫の北部に位置し、日本海に面した自然豊かな地域です。海と山に囲まれたこの土地には、まだあまり知られていない人・場所・体験がたくさんあります。</p>
+      <p class="body">たじまっちは、但馬の面白い人・場所・体験に出会いながら、地域に関わる人を増やしていく地域発信プロジェクトです。</p>
+    </div>
+    <div class="lead-map pixel-panel">
+      <img src="./images/tajima-area-map.png" alt="兵庫県北部の但馬エリア地図（豊岡市・養父市・朝来市・香美町・新温泉町の3市2町）">
+      <div class="lead-map-caption"><span class="chip"></span>但馬エリア（兵庫県北部・3市2町）</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= VOICES ================= -->
+<section class="voices">
+  <div class="wrap reveal">
+    <div class="eyebrow">Our Motivation</div>
+    <div class="voice-grid">
+      <div class="voice-card pixel-panel-dark">
+        <p>但馬をもっと盛り上げたい</p>
+      </div>
+      <div class="voice-card pixel-panel-dark">
+        <p>この地域で頑張る人や、まだ知られていない魅力を届けたい</p>
+      </div>
+    </div>
+    <p class="closing">そんな想いを持ったメンバーが中心となり、但馬を楽しみながら巡り、地域の魅力を発信しています。</p>
+  </div>
+</section>
+
+<div class="tile-divider"></div>
+
+<!-- ================= QUEST CATEGORIES ================= -->
+<section class="quests">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="text-align:center;">What We Explore</div>
+    <h2>但馬を巡る、3つのクエスト</h2>
+  </div>
+  <div class="wrap">
+    <div class="quest-grid">
+      <div class="quest-card pixel-panel">
+        <div class="quest-icon-frame">
+          <svg class="quest-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="15" r="8" stroke="#3FA34D" stroke-width="3"/>
+            <path d="M8,42 C8,30 15,26 24,26 C33,26 40,30 40,42" stroke="#E4432A" stroke-width="3" stroke-linecap="square"/>
+          </svg>
+        </div>
+        <h3>人 にであう</h3>
+        <p>但馬で挑戦を続ける人、面白い活動をしている人に会いに行く。一人ひとりの想いや背景に触れます。</p>
+      </div>
+      <div class="quest-card pixel-panel">
+        <div class="quest-icon-frame">
+          <svg class="quest-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24,42 C24,42 10,28 10,18 C10,10.3 16.3,4 24,4 C31.7,4 38,10.3 38,18 C38,28 24,42 24,42 Z" stroke="#3FA34D" stroke-width="3"/>
+            <circle cx="24" cy="18" r="5" stroke="#F2C230" stroke-width="3"/>
+          </svg>
+        </div>
+        <h3>場所 をめぐる</h3>
+        <p>まだあまり知られていない、但馬のとっておきの場所を訪ねる。海沿いの町から山あいの集落まで。</p>
+      </div>
+      <div class="quest-card pixel-panel">
+        <div class="quest-icon-frame">
+          <svg class="quest-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6,24 C6,24 14,10 24,10 C34,10 42,24 42,24 C42,24 34,38 24,38 C14,38 6,24 6,24 Z" stroke="#3FA34D" stroke-width="3"/>
+            <circle cx="24" cy="24" r="6" stroke="#6FD3F7" stroke-width="3"/>
+          </svg>
+        </div>
+        <h3>体験 をたのしむ</h3>
+        <p>但馬でしか味わえない、五感で楽しむ体験に出会う。実際に歩き、味わい、感じることを大切に。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MEMBERS ================= -->
+<section id="members" class="members">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="text-align:center;">Who We Are</div>
+    <h2>メンバー紹介</h2>
+    <div class="member-grid">
+      <div class="member-card pixel-panel">
+        <div class="member-avatar">M</div>
+        <div class="member-body">
+          <div class="member-tag">MEMBER 01</div>
+          <h3>お名前</h3>
+          <p class="member-role">役割・肩書き</p>
+          <p class="member-comment">ひとことコメントが入ります。但馬への想いや活動のきっかけなどを書きます。</p>
+        </div>
+      </div>
+      <div class="member-card pixel-panel">
+        <div class="member-avatar">M</div>
+        <div class="member-body">
+          <div class="member-tag">MEMBER 02</div>
+          <h3>お名前</h3>
+          <p class="member-role">役割・肩書き</p>
+          <p class="member-comment">ひとことコメントが入ります。但馬への想いや活動のきっかけなどを書きます。</p>
+        </div>
+      </div>
+      <div class="member-card pixel-panel">
+        <div class="member-avatar">M</div>
+        <div class="member-body">
+          <div class="member-tag">MEMBER 03</div>
+          <h3>お名前</h3>
+          <p class="member-role">役割・肩書き</p>
+          <p class="member-comment">ひとことコメントが入ります。但馬への想いや活動のきっかけなどを書きます。</p>
+        </div>
+      </div>
+      <div class="member-card pixel-panel">
+        <div class="member-avatar">M</div>
+        <div class="member-body">
+          <div class="member-tag">MEMBER 04</div>
+          <h3>お名前</h3>
+          <p class="member-role">役割・肩書き</p>
+          <p class="member-comment">ひとことコメントが入ります。但馬への想いや活動のきっかけなどを書きます。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="tile-divider"></div>
+
+<!-- ================= CHANNELS ================= -->
+<section id="channels" class="channels">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="text-align:center;">How We Share</div>
+    <h2>発信のかたち</h2>
+    <div class="channel-grid">
+      <div class="channel-card pixel-panel">
+        <span class="channel-tag">SNS</span>
+        <p>たじまっちメンバーが但馬を巡る様子を発信。ふらっと立ち寄った場所や、道中の偶然の出会いを、リアルタイムに届けます。</p>
+        <a class="channel-link" href="#" aria-label="SNSをフォローする（リンク準備中）">SNSをフォローする →</a>
+      </div>
+      <div class="channel-card pixel-panel">
+        <span class="channel-tag">note</span>
+        <p>出会った人の想いや活動の背景を、丁寧に記録していきます。一人ひとりのストーリーを、じっくりと言葉で届けます。</p>
+        <a class="channel-link" href="#" aria-label="noteを読む（リンク準備中）">noteを読む →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section id="join" class="cta">
+  <div class="wrap reveal">
+    <h2>一緒に、まだ知らない<br class="brk">但馬に出会いにいきませんか。</h2>
+    <p>たじまっちは、但馬を楽しみながら巡り、地域の魅力を発信する仲間を増やしています。まずはSNSやnoteをのぞいてみてください。</p>
+    <div class="cta-buttons">
+      <a href="#" class="btn btn-fill">SNSをフォローする</a>
+      <a href="#" class="btn btn-outline">noteを読む</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo"><img src="./images/tajimatch-logo.png" alt="たじまっち" class="logo-icon">たじまっち</div>
+  <div>但馬の人・場所・体験に出会う、地域クエスト型メディア／コミュニティ</div>
+</footer>
+
+<script>
+  // reveal on scroll
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('is-visible'));
+  }
+</script>
+
+</body>
+</html>
